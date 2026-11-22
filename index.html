@@ -6,32 +6,60 @@
 <title>إدارة تجارة البن</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f6f1ea;--card:#fff;--ink:#2b1a10;--soft:#7a6a5d;--line:#e8dfd4;--acc:#a8561b;--hd:#3b2314;--in:#15803d;--out:#b91c1c;--inp:#fff;--btn:#ece3d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1a120c;--card:#271b13;--ink:#f3e9dd;--soft:#b3a090;--line:#3d2d21;--acc:#d98238;--hd:#120b07;--in:#4ade80;--out:#f87171;--inp:#1f150e;--btn:#3a2a1d;color-scheme:dark}}
+:root{--bg:#f6eee3;--card:#fffaf2;--ink:#2b1a10;--soft:#80705f;--line:#eadfce;--acc:#b4531a;--acc2:#d9822b;--onacc:#fff;--hd:#3b2314;--hd2:#6a3b1f;--in:#15803d;--out:#c0392b;--inp:#fff;--btn:#efe4d4;--sh:0 6px 20px #3b231418;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-t="espresso"]{color-scheme:dark;--bg:#120c08;--card:#1e1510;--ink:#f4e9dc;--soft:#b09c88;--line:#33251b;--acc:#e0a458;--acc2:#f2c27b;--onacc:#1a0f08;--hd:#0b0705;--hd2:#2a1a10;--in:#5ee08a;--out:#ff7b6b;--inp:#171009;--btn:#2d2018;--sh:0 8px 24px #00000066}
+:root[data-t="matcha"]{--bg:#edf3ee;--card:#fff;--ink:#14261f;--soft:#5f7a6e;--line:#d6e4da;--acc:#2f7a62;--acc2:#4fae8c;--hd:#12392e;--hd2:#1f6b55;--btn:#e1ede5;--sh:0 6px 20px #12392e1a}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-header{background:var(--hd);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:4px solid var(--acc)}
-header h1{margin:0;font-size:20px}header small{color:#d9c7b5}
-nav{display:flex;gap:6px;flex-wrap:wrap;padding:10px;background:var(--card);border-bottom:1px solid var(--line)}
-button{border:0;border-radius:8px;padding:8px 12px;cursor:pointer;font-weight:700;background:var(--btn);color:var(--ink);font-family:inherit}
-button.on,button.primary{background:var(--acc);color:#fff}button.danger{background:#fee2e2;color:#991b1b}button.good{background:#dcfce7;color:#166534}
-main{max-width:1150px;margin:16px auto;padding:0 12px}.page{display:none}.page.active{display:block}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px}
-.card,.panel{background:var(--card);border-radius:12px;padding:14px;box-shadow:0 2px 8px #0000000f}.panel{margin-bottom:14px}.panel h3{margin:0 0 8px}
-.num{font-size:22px;font-weight:800;margin-top:4px}.in{color:var(--in)}.out{color:var(--out)}.muted{color:var(--soft);font-size:13px}
+*{box-sizing:border-box}
+body{margin:0;font-family:Cairo,Tahoma,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{position:relative;overflow:hidden;background:linear-gradient(135deg,var(--hd),var(--hd2));color:#fff;padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header::before{content:"☕";position:absolute;left:-8px;top:-22px;font-size:130px;opacity:.07;transform:rotate(-15deg)}
+header::after{content:"";position:absolute;inset:auto 0 0 0;height:3px;background:linear-gradient(90deg,var(--acc),var(--acc2),transparent)}
+header>*{position:relative;z-index:1}
+header h1{margin:0;font-size:21px;display:flex;align-items:center;gap:10px}
+header h1::before{content:"☕";background:#ffffff22;border-radius:14px;padding:4px 9px;font-size:20px}
+header small{color:#ffffffb3}
+#themes{display:flex;gap:2px;background:#ffffff1a;border-radius:999px;padding:3px}
+#themes button{padding:3px 8px;background:transparent;color:#fff;font-size:15px}#themes button.on{background:#ffffff38}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;gap:6px;padding:10px;overflow-x:auto;background:color-mix(in srgb,var(--card) 90%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+@media(min-width:900px){nav{flex-wrap:wrap}}
+nav button{white-space:nowrap;background:transparent;padding:8px 14px}
+nav button:hover{background:var(--btn)}
+nav button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--onacc);box-shadow:var(--sh)}
+button{border:0;border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:700;background:var(--btn);color:var(--ink);font-family:inherit;transition:transform .12s}
+button:active{transform:scale(.95)}
+button.primary{background:linear-gradient(135deg,var(--acc),var(--acc2));color:var(--onacc);box-shadow:var(--sh)}
+button.danger{background:color-mix(in srgb,var(--out) 16%,transparent);color:var(--out)}
+button.good{background:color-mix(in srgb,var(--in) 16%,transparent);color:var(--in)}
+main{max-width:1150px;margin:18px auto;padding:0 12px}.page{display:none}.page.active{display:block;animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:14px}
+.card,.panel{background:var(--card);border-radius:20px;padding:16px;box-shadow:var(--sh);border:1px solid var(--line)}.panel{margin-bottom:14px}
+.card{position:relative;overflow:hidden;font-weight:700;color:var(--soft);padding-top:20px}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,var(--acc),var(--acc2))}
+.card::after{content:attr(data-i);position:absolute;left:12px;top:14px;font-size:28px}
+.num{font-size:26px;font-weight:800;margin-top:4px;color:var(--ink)}.num.in,.in{color:var(--in)}.num.out,.out{color:var(--out)}.muted{color:var(--soft);font-size:13px}
+.panel h3{margin:0 0 10px;font-size:17px;display:flex;align-items:center;gap:8px}
+.panel h3::before{content:"";width:6px;height:18px;border-radius:3px;background:linear-gradient(var(--acc),var(--acc2))}
 label{display:block;font-weight:700;margin:8px 0 4px;font-size:14px}
-input,select,textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit;background:var(--inp);color:var(--ink)}
+input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;font-size:15px;font-family:inherit;background:var(--inp);color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--acc);border-color:transparent}
 .row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:right;font-size:14px}th{background:var(--bg)}
-.tw{overflow-x:auto}td button{padding:4px 9px;font-size:12px;margin:1px}.empty{padding:16px;text-align:center;color:var(--soft)}
-.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;background:#fef3c7;color:#92400e}
-.box{background:var(--bg);border-radius:10px;padding:10px;margin-top:10px;font-size:14px;white-space:pre-line}
-#gate{position:fixed;inset:0;background:var(--hd);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+table{width:100%;border-collapse:collapse}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:right;font-size:14px}
+th{background:color-mix(in srgb,var(--acc) 14%,var(--card));font-size:13px}
+tr:nth-child(even) td{background:color-mix(in srgb,var(--ink) 3%,transparent)}
+.tw{overflow-x:auto;border-radius:12px}td button{padding:4px 10px;font-size:12px;margin:1px}.empty{padding:18px;text-align:center;color:var(--soft)}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:700;background:color-mix(in srgb,var(--acc) 18%,transparent);color:var(--acc)}
+.box{background:color-mix(in srgb,var(--acc) 9%,var(--card));border:1px dashed var(--acc);border-radius:14px;padding:12px;margin-top:10px;font-size:14px;white-space:pre-line}
+#gate{position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,var(--hd2),var(--hd) 65%);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+#gate::before{content:"";position:absolute;inset:0;background-image:radial-gradient(#ffffff12 2px,transparent 2px);background-size:30px 30px}
 body.locked #gate{display:flex}body.locked>*:not(#gate){display:none!important}
-.gbox{background:var(--card);border-radius:16px;padding:24px;width:100%;max-width:340px;border-top:6px solid var(--acc)}
-.gbox h1{margin:0 0 2px;text-align:center}.gbox p{text-align:center;margin:0 0 10px;color:var(--soft)}
+.gbox{position:relative;background:var(--card);border-radius:26px;padding:26px;width:100%;max-width:350px;box-shadow:0 20px 60px #00000066;border:1px solid var(--line)}
+.gbox h1{margin:0 0 2px;text-align:center}.gbox h1::before{content:"☕";display:block;font-size:46px;margin-bottom:4px}
+.gbox p{text-align:center;margin:0 0 10px;color:var(--soft)}
 body.staff .mgr{display:none!important}
 </style>
+
 </head>
 <body class="locked">
 <div id="gate"><form class="gbox" onsubmit="event.preventDefault();login()">
@@ -45,19 +73,19 @@ body.staff .mgr{display:none!important}
 <button type="button" onclick="cfgSave()" style="margin-top:8px">حفظ الإعداد</button></details></form></div>
 
 <header><div><h1 class="gname">إدارة تجارة البن</h1><small>مواد خام ← إنتاج ← بيع للمحلات والأسواق</small></div>
-<div style="display:flex;gap:10px;align-items:center"><span id="sync" class="muted"></span><span id="who" class="muted"></span><button onclick="logout()">خروج</button></div></header>
+<div style="display:flex;gap:10px;align-items:center"><span id="sync" class="muted"></span><span id="themes"><button data-t="espresso" onclick="setTheme('espresso')" title="إسبريسو">🌙</button><button data-t="crema" onclick="setTheme('crema')" title="كريما">☕</button><button data-t="matcha" onclick="setTheme('matcha')" title="ماتشا">🌿</button></span><span id="who" class="muted"></span><button onclick="logout()">خروج</button></div></header>
 <nav id="nav">
 <button data-p="dash">الرئيسية</button><button data-p="sale">بيع للمحلات</button><button data-p="cust">العملاء والمتبقي</button><button data-p="ing">المواد الخام</button><button data-p="prod">المنتجات والوصفات</button><button data-p="make">الإنتاج</button>
-<button data-p="tx" class="mgr">المصروفات</button><button data-p="rep" class="mgr">التقارير</button><button data-p="set" class="mgr">الإعدادات والنسخ</button>
+<button data-p="tx" class="mgr">المصروفات</button><button data-p="rep" class="mgr">التقارير</button><button data-p="usr" class="mgr">المستخدمون</button><button data-p="set" class="mgr">الإعدادات والنسخ</button>
 </nav>
 <main>
 <section id="dash" class="page active">
 <div class="cards">
-<div class="card">مبيعات اليوم<div class="num in" id="d_s">0</div></div>
-<div class="card">المحصّل اليوم<div class="num in" id="d_c">0</div></div>
-<div class="card mgr">صافي ربح الشهر<div class="num" id="d_n">0</div></div>
-<div class="card mgr">رصيد الخزنة<div class="num" id="d_b">0</div></div>
-<div class="card">متبقي عند المحلات<div class="num out" id="d_r">0</div></div>
+<div class="card" data-i="🛍️">مبيعات اليوم<div class="num in" id="d_s">0</div></div>
+<div class="card" data-i="💵">المحصّل اليوم<div class="num in" id="d_c">0</div></div>
+<div class="card mgr" data-i="📈">صافي ربح الشهر<div class="num" id="d_n">0</div></div>
+<div class="card mgr" data-i="🏦">رصيد الخزنة<div class="num" id="d_b">0</div></div>
+<div class="card" data-i="⏳">متبقي عند المحلات<div class="num out" id="d_r">0</div></div>
 </div>
 <div class="actions" style="margin:0 0 14px"><button class="primary" onclick="show('sale')">+ بيع جديد</button><button onclick="show('make')">+ إنتاج دفعة</button><button onclick="show('ing')">+ شراء مواد خام</button></div>
 <div class="panel"><h3>مخزون المنتجات الجاهزة</h3><div class="tw" id="d_p"></div></div>
@@ -135,6 +163,9 @@ body.staff .mgr{display:none!important}
 <div class="actions"><button onclick="repQ(0)">اليوم</button><button onclick="repQ(6)">7 أيام</button><button onclick="repQ('m')">هذا الشهر</button><button class="good" onclick="repWa()">إرسال واتساب</button></div>
 <div id="r_out" class="tw" style="margin-top:10px"></div></div></section>
 
+<section id="usr" class="page"><div class="panel"><h3>المستخدمون والصلاحيات</h3>
+<p class="muted">أنشئ المستخدم الجديد من Supabase ← Authentication ← Users (بريد وكلمة مرور)، وسيظهر هنا تلقائياً كموظف. غيّر الدور من القائمة.</p>
+<div class="tw" id="u_tbl"></div><div class="actions"><button onclick="rUsr()">تحديث</button></div></div></section>
 <section id="set" class="page">
 <div class="panel"><h3>بيانات النشاط</h3><div class="row">
 <div><label>اسم النشاط</label><input id="g_name"></div><div><label>الهاتف</label><input id="g_phone"></div>
@@ -142,7 +173,7 @@ body.staff .mgr{display:none!important}
 <div><label>رصيد افتتاحي للخزنة</label><input id="g_open" type="number"></div><div><label>حد التنبيه للمواد الخام (كجم)</label><input id="g_low" type="number"></div>
 <div><label>واتساب المالك</label><input id="g_own" inputmode="tel"></div></div>
 <div class="actions"><button class="primary" onclick="setSave()">حفظ</button></div></div>
-<div class="panel"><h3>المستخدمون وكلمات المرور</h3><p class="muted">تُدار من لوحة Supabase ← Authentication ← Users، والأدوار من جدول profiles.</p></div>
+<div class="panel"><h3>المستخدمون وكلمات المرور</h3><p class="muted">الحسابات تُنشأ من Supabase ← Authentication ← Users، والأدوار تُدار من صفحة «المستخدمون».</p></div>
 <div class="panel"><h3>النسخ الاحتياطي</h3><p class="muted">البيانات على هذا الجهاز فقط. خذ نسخة بانتظام.</p>
 <div class="actions"><button class="primary" onclick="backup()">تنزيل نسخة</button><button onclick="$('rf').click()">استرجاع نسخة</button><button class="danger" onclick="wipe()">حذف كل البيانات</button></div>
 <input type="file" id="rf" accept=".json" style="display:none" onchange="restore(event)"></div>
@@ -151,6 +182,8 @@ body.staff .mgr{display:none!important}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const $=i=>document.getElementById(i),K='coffeeBizV1';
+const TH=['espresso','crema','matcha'];function setTheme(t){document.documentElement.dataset.t=t;try{localStorage.setItem('cbTheme',t)}catch(e){}document.querySelectorAll('#themes button').forEach(b=>b.classList.toggle('on',b.dataset.t===t))}
+{let t=null;try{t=localStorage.getItem('cbTheme')}catch(e){}if(!TH.includes(t))t=matchMedia('(prefers-color-scheme: dark)').matches?'espresso':'crema';setTheme(t)}
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
 const fmt=n=>(Math.round((+n||0)*100)/100).toLocaleString('en-US'),uid=()=>Date.now()*10+Math.floor(Math.random()*10);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -173,7 +206,7 @@ const cBal=c=>D.sales.filter(s=>s.c===c.id).reduce((a,s)=>a+sTotalOf(s)-s.paid,0
 const estCost=p=>(p.extra||0)+p.rec.reduce((a,r)=>{const i=D.ing.find(x=>x.name===r.n);return a+r.pct/100*(i?i.cost:0)},0);
 function fillSel(id,html){const e=$(id),v=e.value;e.innerHTML=html;if(v)e.value=v}
 /* login */
-let sb=null,remoteReady=false,pt=null;
+let sb=null,remoteReady=false,pt=null,myId='',myEm='';
 const setSync=t=>{const e=$('sync');if(e)e.textContent=t};
 function cfg(){try{return JSON.parse(localStorage.getItem('cbSb'))}catch(e){return null}}
 function cfgSave(){const u=$('cf_url').value.trim(),k=$('cf_key').value.trim();if(!u||!k)return alert('أدخل الرابط والمفتاح');try{localStorage.setItem('cbSb',JSON.stringify({u,k}))}catch(e){}location.reload()}
@@ -181,12 +214,15 @@ function initSb(){const c=cfg();if(c&&window.supabase)sb=window.supabase.createC
 async function login(){if(!sb){$('cfd').open=true;$('lerr').textContent='أدخل إعداد الاتصال أولاً';return}
  $('lerr').textContent='جارٍ الدخول...';const r=await sb.auth.signInWithPassword({email:$('lu').value.trim(),password:$('lp').value});
  if(r.error){$('lerr').textContent='بيانات الدخول غير صحيحة أو لا يوجد اتصال';return}await enter(r.data.user)}
-async function enter(user){const pr=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle(),role=pr.data&&pr.data.role==='admin'?'admin':'staff';
+async function enter(user){const pr=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle(),role=pr.data&&pr.data.role==='admin'?'admin':'staff';myId=user.id;myEm=user.email||'';
  const r=await sb.from('business_data').select('data').eq('id',1).maybeSingle();
  if(r.error){$('lerr').textContent='تعذر تحميل البيانات: '+(r.error.message||r.error.code||'');return}
  if(r.data&&r.data.data)D=mig(Object.assign(def(),r.data.data));remoteReady=true;me=role;
  if(!r.data&&role==='admin')push();
- document.body.classList.remove('locked');document.body.classList.toggle('staff',role!=='admin');$('who').textContent=role==='admin'?'المدير':'موظف';$('lp').value='';$('lerr').textContent='';show('dash')}
+ document.body.classList.remove('locked');document.body.classList.toggle('staff',role!=='admin');$('who').textContent=(role==='admin'?'المدير':'موظف')+' · '+myEm;if(!pr.data)setSync('⚠ لا يوجد ملف صلاحيات - شغّل SQL الإعداد');$('lp').value='';$('lerr').textContent='';show('dash')}
+async function rUsr(){if(!sb||me!=='admin')return;const r=await sb.from('profiles').select('id,email,role').order('email');
+ $('u_tbl').innerHTML=r.error?'<div class="empty">تعذر التحميل: '+esc(r.error.message)+'</div>':tbl(['البريد','الدور'],r.data.map(u=>`<tr><td>${esc(u.email||u.id)}${u.id===myId?' <span class="badge">أنت</span>':''}</td><td><select ${u.id===myId?'disabled':''} onchange="uRole('${u.id}',this.value)"><option value="admin"${u.role==='admin'?' selected':''}>مدير</option><option value="staff"${u.role!=='admin'?' selected':''}>موظف</option></select></td></tr>`),'لا يوجد مستخدمون')}
+async function uRole(id,role){const r=await sb.from('profiles').update({role}).eq('id',id);alert(r.error?'تعذر التغيير: '+r.error.message:'تم تغيير الدور');rUsr()}
 function logout(){me=null;remoteReady=false;if(sb)sb.auth.signOut();document.body.classList.add('locked');document.body.classList.remove('staff')}
 function push(){if(!sb||!remoteReady)return;clearTimeout(pt);setSync('جارٍ الحفظ...');pt=setTimeout(async()=>{pt=null;const r=await sb.from('business_data').upsert({id:1,data:D,updated_at:new Date().toISOString()});setSync(r.error?'⚠ لم يُحفظ على الإنترنت':'✓ تم الحفظ')},600)}
 async function pull(){if(!sb||!remoteReady||pt)return;const r=await sb.from('business_data').select('data').eq('id',1).maybeSingle();if(r.data&&r.data.data){D=mig(Object.assign(def(),r.data.data));render()}}
@@ -282,7 +318,7 @@ function backup(){const a=document.createElement('a');a.href=URL.createObjectURL
 function restore(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!Array.isArray(x.sales)||!Array.isArray(x.ing))throw 0;if(!confirm('سيتم استبدال البيانات الحالية. متابعة؟'))return;D=mig(Object.assign(def(),x));save();alert('تم الاسترجاع')}catch(_){alert('ملف غير صالح')}};r.readAsText(f)}
 function wipe(){if(confirm('حذف كل البيانات نهائياً؟')&&confirm('تأكيد أخير: لا يمكن التراجع')){const u=D.users;D=def();D.users=u;save()}}
 function render(){if(!me)return;document.querySelectorAll('.gname').forEach(e=>e.textContent=D.name);document.title=D.name;
- const a=document.querySelector('.page.active').id;({dash:rDash,sale:rSale,cust:rCust,ing:rIng,prod:rProd,make:rMake,tx:rTx,rep:rRep,set:rSet})[a]?.()}
+ const a=document.querySelector('.page.active').id;({dash:rDash,sale:rSale,cust:rCust,ing:rIng,prod:rProd,make:rMake,tx:rTx,rep:rRep,set:rSet,usr:rUsr})[a]?.()}
 tCats();initSb();
 if(sb)sb.auth.getSession().then(r=>{if(r.data.session)enter(r.data.session.user)});
 </script>
