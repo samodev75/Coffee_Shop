@@ -36,14 +36,16 @@ body.staff .mgr{display:none!important}
 <body class="locked">
 <div id="gate"><form class="gbox" onsubmit="event.preventDefault();login()">
 <h1 class="gname">إدارة تجارة البن</h1><p>نظام المخزون والمبيعات</p>
-<label>اسم المستخدم</label><input id="lu" autocomplete="off" autocapitalize="off">
+<label>البريد الإلكتروني</label><input id="lu" type="email" dir="ltr" autocomplete="username" autocapitalize="off">
 <label>كلمة المرور</label><input id="lp" type="password">
 <div id="lerr" class="out" style="min-height:22px;margin-top:6px;font-weight:700"></div>
 <button class="primary" style="width:100%;padding:12px">دخول</button>
-<p class="muted" style="margin-top:12px">البيانات محفوظة على هذا الجهاز فقط</p></form></div>
+<details id="cfd" style="margin-top:10px"><summary class="muted">إعداد الاتصال (مرة واحدة)</summary>
+<label>Project URL</label><input id="cf_url" dir="ltr" placeholder="https://xxxx.supabase.co"><label>anon / publishable key</label><input id="cf_key" dir="ltr">
+<button type="button" onclick="cfgSave()" style="margin-top:8px">حفظ الإعداد</button></details></form></div>
 
 <header><div><h1 class="gname">إدارة تجارة البن</h1><small>مواد خام ← إنتاج ← بيع للمحلات والأسواق</small></div>
-<div style="display:flex;gap:10px;align-items:center"><span id="who" class="muted"></span><button onclick="logout()">خروج</button></div></header>
+<div style="display:flex;gap:10px;align-items:center"><span id="sync" class="muted"></span><span id="who" class="muted"></span><button onclick="logout()">خروج</button></div></header>
 <nav id="nav">
 <button data-p="dash">الرئيسية</button><button data-p="sale">بيع للمحلات</button><button data-p="cust">العملاء والمتبقي</button><button data-p="ing">المواد الخام</button><button data-p="prod">المنتجات والوصفات</button><button data-p="make">الإنتاج</button>
 <button data-p="tx" class="mgr">المصروفات</button><button data-p="rep" class="mgr">التقارير</button><button data-p="set" class="mgr">الإعدادات والنسخ</button>
@@ -140,13 +142,13 @@ body.staff .mgr{display:none!important}
 <div><label>رصيد افتتاحي للخزنة</label><input id="g_open" type="number"></div><div><label>حد التنبيه للمواد الخام (كجم)</label><input id="g_low" type="number"></div>
 <div><label>واتساب المالك</label><input id="g_own" inputmode="tel"></div></div>
 <div class="actions"><button class="primary" onclick="setSave()">حفظ</button></div></div>
-<div class="panel"><h3>كلمات المرور</h3><div class="row"><div><label>المدير (admin)</label><input id="pw_a" type="password" placeholder="جديدة"></div><div><label>الموظف (staff)</label><input id="pw_s" type="password" placeholder="جديدة"></div></div>
-<div class="actions"><button onclick="pwSave()">تغيير</button></div></div>
+<div class="panel"><h3>المستخدمون وكلمات المرور</h3><p class="muted">تُدار من لوحة Supabase ← Authentication ← Users، والأدوار من جدول profiles.</p></div>
 <div class="panel"><h3>النسخ الاحتياطي</h3><p class="muted">البيانات على هذا الجهاز فقط. خذ نسخة بانتظام.</p>
 <div class="actions"><button class="primary" onclick="backup()">تنزيل نسخة</button><button onclick="$('rf').click()">استرجاع نسخة</button><button class="danger" onclick="wipe()">حذف كل البيانات</button></div>
 <input type="file" id="rf" accept=".json" style="display:none" onchange="restore(event)"></div>
 </section>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const $=i=>document.getElementById(i),K='coffeeBizV1';
 const today=()=>new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
@@ -156,14 +158,14 @@ const def=()=>({name:'إدارة تجارة البن',phone:'',cc:'249',cur:'ج.
 function mig(d){d.prods.forEach(p=>{if(!p.st){p.st={'1':p.s1||0,'0.5':p.s05||0};p.pr={'1':p.p1||0,'0.5':p.p5||0}}});return d}
 function load(){let d=null;try{d=JSON.parse(localStorage.getItem(K))}catch(e){}return mig(Object.assign(def(),d||{}))}
 let D=load(),me=null;
-function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}render()}
+function save(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}push();render()}
 const cur=()=>' '+D.cur,zl=z=>z=='1'?'كيلو':z=='0.5'?'نصف كيلو':fmt(z)+' كجم';
 const tbl=(h,r,m)=>r.length?'<table><tr>'+h.map(x=>'<th>'+x+'</th>').join('')+'</tr>'+r.join('')+'</table>':'<div class="empty">'+(m||'لا توجد بيانات')+'</div>';
 const sTotalOf=s=>s.q*s.pr,stockKg=p=>Object.keys(p.st).reduce((a,k)=>a+k*p.st[k],0);
 const zOpts=()=>D.sizes.map(z=>`<option value="${z}">${zl(z)}</option>`).join('')+'<option value="__new">+ حجم آخر…</option>';
 const stTxt=p=>Object.keys(p.st).sort((a,b)=>a-b).filter(k=>p.st[k]).map(k=>zl(k)+': '+p.st[k]).join(' · ')||'—',prTxt=p=>D.sizes.map(z=>zl(z)+': '+fmt(p.pr[z]||0)).join(' · ');
 function newSize(){const v=parseFloat(String(prompt('حجم العبوة الجديد بالكيلو (مثال: 0.25 أو 2 أو 5)؟')||'').replace(',','.'));if(!(v>0))return 0;if(!D.sizes.includes(v)){D.sizes.push(v);D.sizes.sort((a,b)=>a-b)}try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}return v}
-function addSize(){if(newSize())render()}
+function addSize(){if(newSize())save()}
 function delSize(z){if(D.prods.some(p=>(p.st[z]||0)>0))return alert('يوجد مخزون جاهز بهذا الحجم');if(confirm('إزالة هذا الحجم من القائمة؟')){D.sizes=D.sizes.filter(x=>x!==z);save()}}
 function rSizes(){const v={};document.querySelectorAll('[data-sz]').forEach(i=>v[i.dataset.sz]=i.value);$('p_sz').innerHTML=D.sizes.map(z=>`<button onclick="delSize(${z})">${zl(z)} ✕</button>`).join(' ');$('p_prices').innerHTML=D.sizes.map(z=>`<div><label>${zl(z)}</label><input type="number" min="0" data-sz="${z}" value="${v[z]??''}"></div>`).join('')}
 function rBz(){const v={};document.querySelectorAll('[data-bz]').forEach(i=>v[i.dataset.bz]=i.value);$('b_sz').innerHTML=D.sizes.map(z=>`<div><label>${zl(z)}</label><input type="number" min="0" data-bz="${z}" value="${v[z]??''}" oninput="bPrev()"></div>`).join('')}
@@ -171,8 +173,24 @@ const cBal=c=>D.sales.filter(s=>s.c===c.id).reduce((a,s)=>a+sTotalOf(s)-s.paid,0
 const estCost=p=>(p.extra||0)+p.rec.reduce((a,r)=>{const i=D.ing.find(x=>x.name===r.n);return a+r.pct/100*(i?i.cost:0)},0);
 function fillSel(id,html){const e=$(id),v=e.value;e.innerHTML=html;if(v)e.value=v}
 /* login */
-function login(){const u=$('lu').value.trim().toLowerCase(),p=$('lp').value;if(D.users[u]&&D.users[u].p===p){me=u;document.body.classList.remove('locked');document.body.classList.toggle('staff',u==='staff');$('who').textContent=u==='admin'?'المدير':'موظف';$('lp').value='';$('lerr').textContent='';show('dash')}else $('lerr').textContent='بيانات الدخول غير صحيحة'}
-function logout(){me=null;document.body.classList.add('locked');document.body.classList.remove('staff')}
+let sb=null,remoteReady=false,pt=null;
+const setSync=t=>{const e=$('sync');if(e)e.textContent=t};
+function cfg(){try{return JSON.parse(localStorage.getItem('cbSb'))}catch(e){return null}}
+function cfgSave(){const u=$('cf_url').value.trim(),k=$('cf_key').value.trim();if(!u||!k)return alert('أدخل الرابط والمفتاح');try{localStorage.setItem('cbSb',JSON.stringify({u,k}))}catch(e){}location.reload()}
+function initSb(){const c=cfg();if(c&&window.supabase)sb=window.supabase.createClient(c.u,c.k);else $('cfd').open=true}
+async function login(){if(!sb){$('cfd').open=true;$('lerr').textContent='أدخل إعداد الاتصال أولاً';return}
+ $('lerr').textContent='جارٍ الدخول...';const r=await sb.auth.signInWithPassword({email:$('lu').value.trim(),password:$('lp').value});
+ if(r.error){$('lerr').textContent='بيانات الدخول غير صحيحة أو لا يوجد اتصال';return}await enter(r.data.user)}
+async function enter(user){const pr=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle(),role=pr.data&&pr.data.role==='admin'?'admin':'staff';
+ const r=await sb.from('business_data').select('data').eq('id',1).maybeSingle();
+ if(r.error){$('lerr').textContent='تعذر تحميل البيانات';return}
+ if(r.data&&r.data.data)D=mig(Object.assign(def(),r.data.data));remoteReady=true;me=role;
+ if(!r.data&&role==='admin')push();
+ document.body.classList.remove('locked');document.body.classList.toggle('staff',role!=='admin');$('who').textContent=role==='admin'?'المدير':'موظف';$('lp').value='';$('lerr').textContent='';show('dash')}
+function logout(){me=null;remoteReady=false;if(sb)sb.auth.signOut();document.body.classList.add('locked');document.body.classList.remove('staff')}
+function push(){if(!sb||!remoteReady)return;clearTimeout(pt);setSync('جارٍ الحفظ...');pt=setTimeout(async()=>{pt=null;const r=await sb.from('business_data').upsert({id:1,data:D,updated_at:new Date().toISOString()});setSync(r.error?'⚠ لم يُحفظ على الإنترنت':'✓ تم الحفظ')},600)}
+async function pull(){if(!sb||!remoteReady||pt)return;const r=await sb.from('business_data').select('data').eq('id',1).maybeSingle();if(r.data&&r.data.data){D=mig(Object.assign(def(),r.data.data));render()}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)pull()});
 function show(p){document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id===p));document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===p));render()}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>show(b.dataset.p));
 function wa(n,t){let x=String(n).replace(/\D/g,'').replace(/^0+/,'');if(!x)return alert('لا يوجد رقم');if(!x.startsWith(D.cc))x=D.cc+x;window.open('https://wa.me/'+x+'?text='+encodeURIComponent(t),'_blank')}
@@ -265,7 +283,8 @@ function restore(e){const f=e.target.files[0];if(!f)return;const r=new FileReade
 function wipe(){if(confirm('حذف كل البيانات نهائياً؟')&&confirm('تأكيد أخير: لا يمكن التراجع')){const u=D.users;D=def();D.users=u;save()}}
 function render(){if(!me)return;document.querySelectorAll('.gname').forEach(e=>e.textContent=D.name);document.title=D.name;
  const a=document.querySelector('.page.active').id;({dash:rDash,sale:rSale,cust:rCust,ing:rIng,prod:rProd,make:rMake,tx:rTx,rep:rRep,set:rSet})[a]?.()}
-tCats();
+tCats();initSb();
+if(sb)sb.auth.getSession().then(r=>{if(r.data.session)enter(r.data.session.user)});
 </script>
 </body>
 </html>
