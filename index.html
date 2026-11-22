@@ -183,7 +183,7 @@ async function login(){if(!sb){$('cfd').open=true;$('lerr').textContent='أدخ�
  if(r.error){$('lerr').textContent='بيانات الدخول غير صحيحة أو لا يوجد اتصال';return}await enter(r.data.user)}
 async function enter(user){const pr=await sb.from('profiles').select('role').eq('id',user.id).maybeSingle(),role=pr.data&&pr.data.role==='admin'?'admin':'staff';
  const r=await sb.from('business_data').select('data').eq('id',1).maybeSingle();
- if(r.error){$('lerr').textContent='تعذر تحميل البيانات';return}
+ if(r.error){$('lerr').textContent='تعذر تحميل البيانات: '+(r.error.message||r.error.code||'');return}
  if(r.data&&r.data.data)D=mig(Object.assign(def(),r.data.data));remoteReady=true;me=role;
  if(!r.data&&role==='admin')push();
  document.body.classList.remove('locked');document.body.classList.toggle('staff',role!=='admin');$('who').textContent=role==='admin'?'المدير':'موظف';$('lp').value='';$('lerr').textContent='';show('dash')}
